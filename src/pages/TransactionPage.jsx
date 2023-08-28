@@ -71,7 +71,7 @@ export default function TransactionsPage() {
   }
 
   if (!token) {
-    return <h1>LOADING</h1>
+    return <h1>LOADING </h1>
   }
   
   return (

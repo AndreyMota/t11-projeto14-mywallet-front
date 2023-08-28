@@ -14,22 +14,26 @@ export default function HomePage() {
 
 
   useEffect(() => {
-      if (!token) {
-        return navigate('/');
-      } else {
-        getUser(token);
-        api.get('nova-transacao', {headers: {
-          "Authorization": `Bearer ${token}`
-        }})
-        .then((res) => {
-          console.log(res);
-          setOps(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-      }
-  }, []);
+    const storedToken = JSON.parse(localStorage.getItem('token'));
+    if (!storedToken) {
+      setTimeout(() => {
+        navigate('/');  
+      }, 1000);
+      
+    } else {
+      getUser(token);
+      api.get('nova-transacao', {headers: {
+        "Authorization": `Bearer ${token}`
+      }})
+      .then((res) => {
+        console.log(res);
+        setOps(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    }
+  }, [navigate]);
 
 
   function logout() {

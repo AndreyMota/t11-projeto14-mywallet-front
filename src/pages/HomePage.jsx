@@ -2,61 +2,95 @@ import styled from "styled-components"
 import { BiExit } from "react-icons/bi"
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai"
 import { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
+import api from "../axiosConfig";
 
 export default function HomePage() {
   const [token, setToken] = useState(JSON.parse(localStorage.getItem('token')));
+  const [operations, setOps] = useState();
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const { user, getUser } = useContext(AuthContext);
+
+
   useEffect(() => {
-    if (!token) {
-      navigate('/');
-    }
+      if (!token) {
+        return navigate('/');
+      } else {
+        getUser(token);
+        api.get('nova-transacao', {headers: {
+          "Authorization": `Bearer ${token}`
+        }})
+        .then((res) => {
+          console.log(res);
+          setOps(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+      }
   }, []);
+
+
+  function logout() {
+    event.preventDefault()
+    console.log('oi');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setToken();
+    setTimeout(() => navigate('/'), 1000);
+  }
 
   if (!user) {
     return <h1>LOADING</h1>
   }
+
+  if (!token) {
+    return <h1>LOADING</h1>
+  }
+
+  let saldo = 0;
+
   return (
     <HomeContainer>
       <Header>
-        <h1>Olá, {user.nome}</h1>
-        <BiExit />
+        <h1 data-test="user-name">Olá, {user?.nome}</h1>
+        <button data-test="logout" onClick={logout}>
+          <BiExit className="bt"/>
+        </button>
       </Header>
 
       <TransactionsContainer>
         <ul>
-          <ListItemContainer>
-            <div>
-              <span>30/11</span>
-              <strong>Almoço mãe</strong>
-            </div>
-            <Value color={"negativo"}>120,00</Value>
-          </ListItemContainer>
-
-          <ListItemContainer>
-            <div>
-              <span>15/11</span>
-              <strong>Salário</strong>
-            </div>
-            <Value color={"positivo"}>3000,00</Value>
-          </ListItemContainer>
+          {operations?.map((x) => {
+            if (x.tipo === "entrada") saldo += x.valor;
+            if (x.tipo === "saida") saldo -= x.valor;
+            return (
+              <ListItemContainer>
+                <div>
+                  <span>{x.dia}</span>
+                  <strong data-test="registry-name">{x.descricao}</strong>
+                </div>
+                <Value color={x.tipo}><p data-test="registry-amount">{x.valor.toFixed(2)}</p></Value>
+              </ListItemContainer>
+            )
+          })}
         </ul>
+        
 
         <article>
           <strong>Saldo</strong>
-          <Value color={"positivo"}>2880,00</Value>
+          {saldo>=0? <Value color={"entrada"}><p data-test="total-amount">{saldo}</p></Value> : <Value color={"saida"}><p data-test="total-amount">{saldo}</p></Value>}
         </article>
       </TransactionsContainer>
 
 
       <ButtonsContainer>
-        <button>
+        <button onClick={() => navigate('/nova-transacao/entrada')}>
           <AiOutlinePlusCircle />
           <p>Nova <br /> entrada</p>
         </button>
-        <button>
+        <button onClick={() => navigate('/nova-transacao/saida')}>
           <AiOutlineMinusCircle />
           <p>Nova <br />saída</p>
         </button>
@@ -79,6 +113,12 @@ const Header = styled.header`
   margin-bottom: 15px;
   font-size: 26px;
   color: white;
+  button {
+    width: 25%;
+    .bt {
+      height: 90%;
+    }
+  }
 `
 const TransactionsContainer = styled.article`
   flex-grow: 1;
@@ -89,6 +129,10 @@ const TransactionsContainer = styled.article`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  ul {
+    max-height: 350px;
+    overflow-y: auto;
+  }
   article {
     display: flex;
     justify-content: space-between;   
@@ -120,7 +164,7 @@ const ButtonsContainer = styled.section`
 const Value = styled.div`
   font-size: 16px;
   text-align: right;
-  color: ${(props) => (props.color === "positivo" ? "green" : "red")};
+  color: ${(props) => (props.color === "entrada" ? "green" : "red")};
 `
 const ListItemContainer = styled.li`
   display: flex;

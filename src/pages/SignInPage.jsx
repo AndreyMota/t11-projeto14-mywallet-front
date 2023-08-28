@@ -20,9 +20,10 @@ export default function SignInPage() {
   useEffect(() => {
     if (token) {
       getUser(token);
-      setTimeout(() => {
+      navigate('/home');
+      /* setTimeout(() => {
         navigate('/home');
-      }, 1000);
+      }, 1000); */
       
     }
   }, [token]);

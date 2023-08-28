@@ -17,8 +17,8 @@ export default function HomePage() {
     const storedToken = JSON.parse(localStorage.getItem('token'));
     if (!storedToken) {
       setTimeout(() => {
-        navigate('/');  
-      }, 1000);
+        navigate('/')  
+      }, 2500);
       
     } else {
       getUser(token);
@@ -58,7 +58,7 @@ export default function HomePage() {
   return (
     <HomeContainer>
       <Header>
-        <h1>Olá, <p data-test="user-name">{user?.nome}</p></h1>
+        <h1 data-test="user-name">Olá, {user?.nome}</h1>
         <button data-test="logout" onClick={logout}>
           <BiExit className="bt"/>
         </button>
@@ -84,7 +84,7 @@ export default function HomePage() {
 
         <article>
           <strong>Saldo</strong>
-          {saldo>=0? <Value color={"entrada"}><p data-test="total-amount">{saldo}</p></Value> : <Value color={"saida"}><p data-test="total-amount">{saldo}</p></Value>}
+          {saldo>=0? <Value color={"entrada"}><p data-test="total-amount">{saldo.toFixed(2)}</p></Value> : <Value color={"saida"}><p data-test="total-amount">{saldo.toFixed(2)}</p></Value>}
         </article>
       </TransactionsContainer>
 

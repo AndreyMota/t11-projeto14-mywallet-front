@@ -17,7 +17,7 @@ const AuthProvider = ({ children }) => {
 
   const getUser = async (tokein) => {
     setToken(tokein);
-    api.get(`/cadastro`, 
+    api.get(`/`, 
     {headers: {
       Authorization: `Bearer ${tokein}`
     }}).then((res) => {

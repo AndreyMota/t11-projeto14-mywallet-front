@@ -45,6 +45,10 @@ export default function SignInPage() {
     
   }
 
+  if (token) {
+    return <h1>LOADING</h1>
+  }
+
   return (
     <SingInContainer>
       <form onSubmit={logaUser}>

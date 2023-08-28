@@ -31,7 +31,6 @@ export default function SignUpPage() {
 
   function cadastrar() {
     event.preventDefault();
-    api.post('cadastro')
     if (!nome || !email || !senha || !senha2) {
       alert('Preencha todos os campos');
       return;

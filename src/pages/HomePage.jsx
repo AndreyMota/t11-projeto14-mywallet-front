@@ -21,7 +21,7 @@ export default function HomePage() {
   return (
     <HomeContainer>
       <Header>
-        <h1>Olá, Fulano</h1>
+        <h1>Olá, {user.nome}</h1>
         <BiExit />
       </Header>
 

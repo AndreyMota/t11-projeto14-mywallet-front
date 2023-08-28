@@ -38,7 +38,7 @@ export default function HomePage() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setToken();
-    setTimeout(() => navigate('/'), 1000);
+    navigate('/');
   }
 
   if (!user) {
@@ -54,7 +54,7 @@ export default function HomePage() {
   return (
     <HomeContainer>
       <Header>
-        <h1 data-test="user-name">Olá, {user?.nome}</h1>
+        <h1>Olá, <p data-test="user-name">{user?.nome}</p></h1>
         <button data-test="logout" onClick={logout}>
           <BiExit className="bt"/>
         </button>
@@ -86,11 +86,11 @@ export default function HomePage() {
 
 
       <ButtonsContainer>
-        <button onClick={() => navigate('/nova-transacao/entrada')}>
+        <button data-test="new-income" onClick={() => navigate('/nova-transacao/entrada')}>
           <AiOutlinePlusCircle />
           <p>Nova <br /> entrada</p>
         </button>
-        <button onClick={() => navigate('/nova-transacao/saida')}>
+        <button data-test="new-expense" onClick={() => navigate('/nova-transacao/saida')}>
           <AiOutlineMinusCircle />
           <p>Nova <br />saída</p>
         </button>
